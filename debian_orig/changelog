@@ -1,0 +1,5 @@
+vscpl1drv-socketcan (14.0.0-1) UNRELEASED; urgency=medium
+
+  * Initial release (Closes: #1234)
+
+ -- Ake Hedman <akhe@grodansparadis.com>  Thu, 26 Sep 2019 16:00:01 +0200

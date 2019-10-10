@@ -1,0 +1,6 @@
+#!/bin/bash
+
+pandoc -s -t man vscpl1drv-socketcan.1.md -o vscpl1drv-socketcan.1
+sudo cp vscpl1drv-socketcan.1 /usr/share/man/man1/
+
+mandb
