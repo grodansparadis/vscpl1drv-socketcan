@@ -2,7 +2,6 @@ dnl Autoconf settings for vscpl1drv-socketcan
 dnl $Id: configure.in,v 1.5 2017/10/13 11:22:06 akhe Exp $
 
 AC_INIT( [vscpl1drv-socketcan], [14.0.0], [akhe@grodansparadis.com])
-AC_CONFIG_SRCDIR([common/log.cpp])
 
 CONFIGURE_LINE="$0 $*"
 CODENAME="Ant"
@@ -10,7 +9,7 @@ CODENAME="Ant"
 AC_CONFIG_MACRO_DIR(m4)
 
 AC_PREREQ(2.57)
-AC_CONFIG_SRCDIR([common/socketcan.cpp])
+AC_CONFIG_SRCDIR([linux/socketcanobj.cpp])
 AC_CONFIG_AUX_DIR(autotools)
 AC_CONFIG_HEADERS([config.h])
 

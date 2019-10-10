@@ -585,8 +585,7 @@ PACKAGE_STRING='vscpl1drv-socketcan 14.0.0'
 PACKAGE_BUGREPORT='akhe@grodansparadis.com'
 PACKAGE_URL=''
 
-ac_unique_file="common/log.cpp"
-ac_unique_file="common/socketcan.cpp"
+ac_unique_file="linux/socketcanobj.cpp"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -2410,7 +2409,6 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
 
 
 
