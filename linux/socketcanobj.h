@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////
-// CAN232Obj.h: interface for the CSocketcanObj class. 
+// CAN232Obj.h: interface for the CSocketcanObj class.
 //
 // This file is part is part of CANAL (CAN Abstraction Layer)
 // http://www.vscp.org)
@@ -49,11 +49,11 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
-#include "../../../../common/canal.h"
-#include "../../../../common/vscp.h"
-#include "../../../../common/canal_macro.h"
-#include "../../../../../common/com.h"
-#include "../../../../../common/dllist.h"
+#include <canal.h>
+#include <vscp.h>
+#include <canal_macro.h>
+//#include <com.h>
+#include <dllist.h>
 
 
 #define SOCKETCAN_BUF_SIZE		80	// Size for one message buffer
@@ -78,13 +78,13 @@ struct _socketcanobj {
      *  Device name
      */
     char m_devname[IFNAMSIZ + 1];
-    
+
     /*!
      *  Socket to socketcan
      */
     int m_sock;
 
-    /*! 
+    /*!
         Send/Receive Statistics
      */
     canalStatistics m_stat;
@@ -98,7 +98,7 @@ public:
     // Constructor
     CSocketcanObj();
 
-    // Destructor 
+    // Destructor
     virtual ~CSocketcanObj();
 
     /*!
@@ -160,7 +160,7 @@ public:
     int dataAvailable(void);
 
     /*!
-        Get the status code	
+        Get the status code
      */
     bool getStatus(PCANALSTATUS pCanalStatus);
 
@@ -169,8 +169,8 @@ public:
 
 
     /*!
-        The socketcan read/write mutexes 
-	 */ 
+        The socketcan read/write mutexes
+	 */
     pthread_mutex_t m_socketcanRcvMutex;
 	pthread_mutex_t m_socketcanSndMutex;
 

@@ -6,7 +6,7 @@ INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_DIR = /usr/bin/install -c -d
-PROJ_SUBDIRS=linux
+PROJ_SUBDIRS=linux 
 VSCP_PROJ_BASE_DIR=/srv/vscp
 IPADDRESS :=  $(shell hostname -I)
 
