@@ -1,38 +1,47 @@
 #
-# Makefile : Builds vscpl1drv-socketcan for Unix.
+# Makefile : Builds vscpl2drv-socketcan for Unix.
 #
+
+# Package version
+MAJOR_VERSION=1
+MINOR_VERSION=1
+RELEASE_VERSION=0
+BUILD_VERSION=0
+PACKAGE_VERSION=1.1.0
+
+STATIC=no
 
 INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_DIR = /usr/bin/install -c -d
 PROJ_SUBDIRS=linux 
-VSCP_PROJ_BASE_DIR=/srv/vscp
+VSCP_PROJ_BASE_DIR=/srv/vscp/
 IPADDRESS :=  $(shell hostname -I)
+
 
 all:
 	@for d in $(PROJ_SUBDIRS); do (echo "====================================================" &&\
 	echo "Building in dir " $$d && echo "====================================================" && cd $$d && $(MAKE)); done
 
-install-all: install install-folders install-startup-script install-config install-sample-data install-sample-certs install-manpages
 
 install:
 # Install sub components
 	@for d in $(PROJ_SUBDIRS); do (echo "====================================================" &&\
 	echo "Building in dir " $$d && echo "====================================================" && cd $$d && $(MAKE) install); done
 
+uninstall:
+# Uninstall sub components
+	@for d in $(PROJ_SUBDIRS); do (echo "====================================================" &&\
+	echo "Building in dir " $$d && echo "====================================================" && cd $$d && $(MAKE) uninstall); done
+
+man:
+	@for d in $(PROJ_SUBDIRS); do (echo "====================================================" &&\
+	echo "Building in dir " $$d && echo "====================================================" && cd $$d && $(MAKE) man); done
+
 install-manpages:
 	@echo "- Installing man-pages."
-	$(INSTALL_PROGRAM) -d $(DESTDIR)/usr/share/man/man8
-	$(INSTALL_PROGRAM) -d $(DESTDIR)/usr/share/man/man7
-	$(INSTALL_PROGRAM) -d $(DESTDIR)/usr/share/man/man1
-	$(INSTALL_PROGRAM) -b -m644 man/vscpd.8 $(DESTDIR)/usr/share/man/man8/
-	$(INSTALL_PROGRAM) -b -m644 man/uvscpd.8 $(DESTDIR)/usr/share/man/man8/
-	$(INSTALL_PROGRAM) -b -m644 man/vscpworks.1 $(DESTDIR)/usr/share/man/man1/
-	$(INSTALL_PROGRAM) -b -m644 man/vscpcmd.1 $(DESTDIR)/usr/share/man/man1/
-	$(INSTALL_PROGRAM) -b -m644 man/vscp-mkpasswd.1 $(DESTDIR)/usr/share/man/man1/
-	$(INSTALL_PROGRAM) -b -m644 man/vscphelperlib.1 $(DESTDIR)/usr/share/man/man1/
-	$(INSTALL_PROGRAM) -b -m644 man/vscpdrivers.7 $(DESTDIR)/usr/share/man/man7/
+	cp man/(vscpl2drv-socketcan.1 /usr/share/man/man1/
 	mandb
 
 clean:

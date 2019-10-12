@@ -261,7 +261,7 @@
 #define PACKAGE_NAME "vscpl1drv-socketcan"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "vscpl1drv-socketcan 14.0.0"
+#define PACKAGE_STRING "vscpl1drv-socketcan 1.1.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "vscpl1drv-socketcan"
@@ -270,7 +270,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "14.0.0"
+#define PACKAGE_VERSION "1.1.0"
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void

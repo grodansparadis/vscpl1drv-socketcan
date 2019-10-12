@@ -10,8 +10,8 @@ Vcs-Git: https://github.com/grodansparadis/vscpl1drv-socketcan.git
 
 Package: vscpl1drv-socketcan
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libc6-dev (>= 2.15),
- libstdc++6 (>= 4.9), libgcc1 (>= 1:4.1.1)
+Depends: ${shlibs:Depends}, ${misc:Depends}, libc6-dev (>= 2.14),
+ libstdc++6 (>= 5.2), libgcc1 (>= 1:3.0)
 Description: Level I logger driver for VSCP & friends
  This level I driver that can be added to the VSCP daemon/VSCP Works,
  or other tool that can use VSCP Level I drivers, to get logging of
