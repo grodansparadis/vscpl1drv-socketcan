@@ -27,6 +27,7 @@ CXXFLAGS = -D__LINUX__ -fPIC -D_REENTRANT @CXXFLAGS@
 CPPFLAGS = -D__LINUX__ -fPIC @CPPFLAGS@ -fno-var-tracking-assignments -Iinclude -I../_vscp_common -I../_vscp_common_general
 
 LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
 EXTRALIBS = @EXTRALIBS@
 
 DLFLAGS = -g -shared -fPIC -Wl,--no-undefined
@@ -60,10 +61,10 @@ lib:	vscpl1drv-socketcan.so
 	ar rcs libvscpl1drv-socketcan.a vscpl1drv-socketcan.o
 
 test:  test.o $(PROJOBJS)
-	$(CXX) -o $@ test.o $(PROJOBJS) $(LDFLAGS) -L$(LIBDIRNAME) $(EXTRALIBS) @LIBS@
+	$(CXX) -o $@ test.o $(PROJOBJS) $(LDFLAGS) @LIBS@ $(EXTRALIBS)
 
 vscpl1drv-socketcan.so: $(CANALSOCKETCAN_OBJECTS)
-	$(CXX) -o $@ $(CANALSOCKETCAN_OBJECTS) $(DLFLAGS) -L$(LIBDIRNAME) $(EXTRALIBS) @LIBS@
+	$(CXX) -o $@ $(CANALSOCKETCAN_OBJECTS) $(DLFLAGS) @LIBS@ $(EXTRALIBS)
 
 vscpl1drv-socketcan.o: vscpl1drv-socketcan.cpp vscpl1drv-socketcan.h
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c vscpl1drv-socketcan.cpp -o $@
@@ -86,6 +87,10 @@ uninstall:
 	rm -rf $(VSCP_PROJ_BASE_DIR)/drivers/level2/vscpl1drv-socketcan.so
 
 install-strip: install
+
+man: ../man/vscpl1drv-socketcan.1.md
+	pandoc -s -t man ../man/vscpl1drv-socketcan.1.md -o ../man/vscpl1drv-socketcan.1
+
 
 deb:    all
 	echo "\n" | ./builddist.sh
