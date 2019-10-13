@@ -17,7 +17,9 @@ rm -f *
 cp  ${VSCP_PATH}/src/vscp/common/version.h .
 cp  ${VSCP_PATH}/src/vscp/common/canal.h .
 cp  ${VSCP_PATH}/src/vscp/common/canal_macro.h .
+cp  ${VSCP_PATH}/src/vscp/common/canaldlldef.h .
 cp  ${VSCP_PATH}/src/vscp/common/vscp.h .
+cp  ${VSCP_PATH}/src/vscp/common/vscpdlldef.h .
 cp  ${VSCP_PATH}/src/vscp/common/vscp_class.h .
 cp  ${VSCP_PATH}/src/vscp/common/vscp_type.h .
 cp  ${VSCP_PATH}/src/vscp/common/guid.cpp .

@@ -25,26 +25,21 @@ all:
 	echo "Building in dir " $$d && echo "====================================================" && cd $$d && $(MAKE)); done
 
 
-install:
+install: all
 # Install sub components
 	@for d in $(PROJ_SUBDIRS); do (echo "====================================================" &&\
 	echo "Building in dir " $$d && echo "====================================================" && cd $$d && $(MAKE) install); done
 
-uninstall:
+uninstall: all
 # Uninstall sub components
 	@for d in $(PROJ_SUBDIRS); do (echo "====================================================" &&\
 	echo "Building in dir " $$d && echo "====================================================" && cd $$d && $(MAKE) uninstall); done
 
-man:
+man: all
 	@for d in $(PROJ_SUBDIRS); do (echo "====================================================" &&\
 	echo "Building in dir " $$d && echo "====================================================" && cd $$d && $(MAKE) man); done
 
-install-manpages:
-	@echo "- Installing man-pages."
-	cp man/(vscpl2drv-socketcan.1 /usr/share/man/man1/
-	mandb
-
-clean:
+clean: all
 	@for d in $(PROJ_SUBDIRS); do (cd $$d && $(MAKE) clean); done
 	rm -f config.log
 	rm -f config.startup

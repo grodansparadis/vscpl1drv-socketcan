@@ -54,7 +54,7 @@ CANALSOCKETCAN_OBJECTS = vscpl1drv-socketcan.o\
 
 ### Targets: ###
 
-all: vscpl1drv-socketcan.so
+all: vscpl1drv-socketcan.so test
 
 # static lib
 lib:	vscpl1drv-socketcan.so
