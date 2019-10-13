@@ -58,10 +58,10 @@ all: vscpl1drv-socketcan.so test
 
 # static lib
 lib:	vscpl1drv-socketcan.so
-	ar rcs libvscpl1drv-socketcan.a vscpl1drv-socketcan.o
+	ar rcs libvscpl1drv-socketcan.a $(CANALSOCKETCAN_OBJECTS)
 
-test:  test.o $(PROJOBJS)
-	$(CXX) -o $@ test.o $(PROJOBJS) $(LDFLAGS) @LIBS@ $(EXTRALIBS)
+test:  test.o $(CANALSOCKETCAN_OBJECTS)
+	$(CXX) -o $@ test.o $(CANALSOCKETCAN_OBJECTS) $(LDFLAGS) @LIBS@ $(EXTRALIBS)
 
 vscpl1drv-socketcan.so: $(CANALSOCKETCAN_OBJECTS)
 	$(CXX) -o $@ $(CANALSOCKETCAN_OBJECTS) $(DLFLAGS) @LIBS@ $(EXTRALIBS)
