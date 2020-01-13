@@ -1,0 +1,3 @@
+/usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION /usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION
+/usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION /usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so.%MAJOR-VERSION
+/usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION /usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so

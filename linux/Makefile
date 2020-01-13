@@ -3,25 +3,25 @@
 # =========================================================================
 
 # Package version
-MAJOR_VERSION=@MAJOR_VERSION@
-MINOR_VERSION=@MINOR_VERSION@
-RELEASE_VERSION=@RELEASE_VERSION@
-BUILD_VERSION=@BUILD_VERSION@
-PACKAGE_VERSION=@PACKAGE_VERSION@
+MAJOR_VERSION=1
+MINOR_VERSION=1
+RELEASE_VERSION=0
+BUILD_VERSION=0
+PACKAGE_VERSION=1.1.0
 
 # STATIC = yes if a static build is requested.
-STATIC=@STATIC@
-VSCP_PROJ_BASE_DIR=@DESTDIR@
-DESTDIR=@DESTDIR@
+STATIC=no
+VSCP_PROJ_BASE_DIR=/srv/vscp/
+DESTDIR=/srv/vscp/
 
-prefix = @prefix@
-exec_prefix = @exec_prefix@
-INSTALL = @INSTALL@
-top_srcdir = @top_srcdir@
-top_builddir = @top_builddir@
+prefix = /usr/local
+exec_prefix = ${prefix}
+INSTALL = /usr/bin/install -c
+top_srcdir = ..
+top_builddir = ..
 
-CC = @CC@
-CXX = @CXX@
+CC = gcc
+CXX = g++
 
 WARNINGS_HARD = -Werror -Wall -Wextra -pedantic -Wcast-align -Wcast-qual \
   -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self \
@@ -36,19 +36,19 @@ WARNINGS = -Wall
 VERSION_DEFS = -DMAJOR_VERSION=$(MAJOR_VERSION) -DMINOR_VERSION=$(MINOR_VERSION) \
 	-DRELEASE_VERSION=$(RELEASE_VERSION) -DBUILD_VERSION=$(BUILD_VERSION)
 
-CFLAGS = -std=c99 @CFLAGS@ ${WARNINGS} -fPIC -DCBC \
+CFLAGS = -std=c99  ${WARNINGS} -fPIC -DCBC \
 	-I../vscp/src/vscp/common \
 	-I../vscp/src/common
-CXXFLAGS = -D__LINUX__ -fPIC ${WARNINGS} -D_REENTRANT @CXXFLAGS@
-CPPFLAGS = -D__LINUX__ -fPIC ${WARNINGS} @CPPFLAGS@ \
+CXXFLAGS = -D__LINUX__ -fPIC ${WARNINGS} -D_REENTRANT 
+CPPFLAGS = -D__LINUX__ -fPIC ${WARNINGS}  \
 	-fno-var-tracking-assignments \
 	-Iinclude \
 	-I../vscp/src/vscp/common \
 	-I../vscp/src/common
 
-LDFLAGS = @LDFLAGS@
-LIBS = @LIBS@
-EXTRALIBS = @EXTRALIBS@
+LDFLAGS = 
+LIBS = -lm -lpthread -ldl 
+EXTRALIBS = 
 
 DLFLAGS = -g -shared -fPIC -Wl,--no-undefined
 STRIP = strip
@@ -82,10 +82,10 @@ all: $(LIB_PLUS_VER) ../man/vscpl1drv-socketcan.1
 lib:	vscpl1drv-socketcan.so
 	
 test:  test.o $(CANALSOCKETCAN_OBJECTS)
-	$(CXX) -o $@ test.o $(CANALSOCKETCAN_OBJECTS) $(LDFLAGS) @LIBS@ $(EXTRALIBS)
+	$(CXX) -o $@ test.o $(CANALSOCKETCAN_OBJECTS) $(LDFLAGS) -lm -lpthread -ldl  $(EXTRALIBS)
 
 $(LIB_PLUS_VER): $(CANALSOCKETCAN_OBJECTS)
-	$(CXX) -Wl,-soname,$(LIB_SONAME) -o $@ $(CANALSOCKETCAN_OBJECTS) $(DLFLAGS) @LIBS@ $(EXTRALIBS)
+	$(CXX) -Wl,-soname,$(LIB_SONAME) -o $@ $(CANALSOCKETCAN_OBJECTS) $(DLFLAGS) -lm -lpthread -ldl  $(EXTRALIBS)
 	ar rcs libvscpl1drv-socketcan.a $(CANALSOCKETCAN_OBJECTS)
 
 vscpl1drv-socketcan.o: vscpl1drv-socketcan.cpp vscpl1drv-socketcan.h

@@ -7,7 +7,7 @@
 // 
 // This file is part of the VSCP (http://www.vscp.org) 
 //
-// Copyright (C) 2000-2019 Ake Hedman,
+// Copyright (C) 2000-2020 Ake Hedman,
 // Grodans Paradis AB, <akhe@grodansparadis.com>
 // 
 // This file is distributed in the hope that it will be useful,
@@ -102,10 +102,8 @@ CSocketcanApp theApp;
 // addDriverObject
 //
 
-//long CSocketcanApp::addDriverObject( CLog *plog )
-
 long
-CSocketcanApp::addDriverObject(CSocketcanObj *plog)
+CSocketcanApp::addDriverObject(CSocketcanObj *pobj)
 {
 	long h = 0;
 
@@ -114,7 +112,7 @@ CSocketcanApp::addDriverObject(CSocketcanObj *plog)
 
 		if ( NULL == m_socketcanArray[ i ] ) {
 
-			m_socketcanArray[ i ] = plog;
+			m_socketcanArray[ i ] = pobj;
 			h = i + 1681;
 			break;
 		}
@@ -207,15 +205,12 @@ CanalOpen(const char *pDevice, unsigned long flags)
 extern "C" int
 CanalClose(long handle)
 {
-	int rv = 0;
+	CSocketcanObj *pobj = theApp.getDriverObject(handle);
+	if (NULL == pobj) return 0;
 
-	CSocketcanObj *pLog = theApp.getDriverObject(handle);
-	if (NULL == pLog) return 0;
-
-	pLog->close();
+	pobj->close();
 	theApp.removeDriverObject(handle);
 
-	rv = 1;
 	return CANAL_ERROR_SUCCESS;
 }
 

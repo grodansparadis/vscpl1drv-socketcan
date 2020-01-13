@@ -4,7 +4,7 @@
 // This file is part is part of CANAL (CAN Abstraction Layer)
 // http://www.vscp.org)
 //
-// Copyright (C) 2000-2019 Ake Hedman,
+// Copyright (C) 2000-2020 Ake Hedman,
 // Ake Hedman, Grodans Paradis AB, <akhe@grodansparadis.com>
 //
 // This library is free software; you can redistribute it and/or
@@ -87,14 +87,14 @@ bool CSocketcanObj::open(const char *pDevice, unsigned long flags)
 {
 	int rv = true;
 	//char devname[IFNAMSIZ + 1];
-	fd_set rdfs;
-	struct timeval tv;
-	struct sockaddr_can addr;        
-	struct ifreq ifr;
-        struct canfd_frame frame;
-	struct cmsghdr *cmsg;	
-	char ctrlmsg[CMSG_SPACE(sizeof(struct timeval)) + CMSG_SPACE(sizeof(__u32))];
-	const int canfd_on = 1;
+	//fd_set rdfs;
+	//struct timeval tv;
+	//struct sockaddr_can addr;        
+	//struct ifreq ifr;
+    //struct canfd_frame frame;
+	//struct cmsghdr *cmsg;	
+	//char ctrlmsg[CMSG_SPACE(sizeof(struct timeval)) + CMSG_SPACE(sizeof(__u32))];
+	//const int canfd_on = 1;
 	
 	// No device name
 	memset(m_socketcanobj.m_devname, 0, sizeof(m_socketcanobj.m_devname) );
@@ -269,9 +269,6 @@ int CSocketcanObj::readMsg(canalMsg *pMsg)
 
 bool CSocketcanObj::setFilter(unsigned long filter, unsigned long mask)
 {
-	char buf[ 20 ];
-	char szCmd[ 80 ];
-
 	return true;
 }
 
@@ -281,9 +278,6 @@ bool CSocketcanObj::setFilter(unsigned long filter, unsigned long mask)
 
 bool CSocketcanObj::setFilter(unsigned long filter)
 {
-	char buf[ 20 ];
-	char szCmd[ 80 ];
-
 	return true;
 }
 
@@ -293,9 +287,6 @@ bool CSocketcanObj::setFilter(unsigned long filter)
 
 bool CSocketcanObj::setMask(unsigned long mask)
 {
-	char buf[ 20 ];
-	char szCmd[ 80 ];
-
 	return true;
 }
 
@@ -484,7 +475,7 @@ void *workThread(void *pObject)
 			memcpy(frame.data, msg.data, msg.sizeData);
 			
 			// Write the data
-			int nbytes = write( sock, &frame, sizeof(struct can_frame) );
+			write( sock, &frame, sizeof(struct can_frame) );
 
 			// Update statistics
 			psocketcanobj->m_socketcanobj.m_stat.cntTransmitData += msg.sizeData;

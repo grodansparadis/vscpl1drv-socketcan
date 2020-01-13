@@ -7,7 +7,7 @@
 //
 // This file is part of the VSCP (http://www.vscp.org)
 //
-// Copyright (C) 2000-2019 Ake Hedman,
+// Copyright (C) 2000-2020 Ake Hedman,
 // Ake Hedman, Grodans Paradis AB, <akhe@grodansparadis.com>
 //
 // This file is distributed in the hope that it will be useful,
@@ -34,7 +34,6 @@
 #include <canal.h>
 #include <canal_macro.h>
 #include <canaldlldef.h>
-#include <vscpdlldef.h>
 
 #define NUMBER_OF_THREADS 2
 
@@ -101,20 +100,6 @@ void *workThread( void *id )
 	LPFNDLL_CANALBLOCKINGSEND		    m_proc_CanalBlockingSend;
 	LPFNDLL_CANALBLOCKINGRECEIVE	    m_proc_CanalBlockingReceive;
 	LPFNDLL_CANALGETDRIVERINFO		    m_proc_CanalGetdriverInfo;
-
-    // Level II driver methods
-    LPFNDLL_VSCPOPEN			        m_proc_VSCPOpen;
-	LPFNDLL_VSCPCLOSE				    m_proc_VSCPClose;
-	LPFNDLL_VSCPBLOCKINGSEND			m_proc_VSCPBlockingSend;
-	LPFNDLL_VSCPBLOCKINGRECEIVE			m_proc_VSCPBlockingReceive;
-    LPFNDLL_VSCPGETLEVEL				m_proc_VSCPGetLevel;
-    LPFNDLL_VSCPGETVERSION			    m_proc_VSCPGetVersion;
-	LPFNDLL_VSCPGETDLLVERSION		    m_proc_VSCPGetDllVersion;
-	LPFNDLL_VSCPGETVENDORSTRING	        m_proc_VSCPGetVendorString;
-    LPFNDLL_VSCPGETDRIVERINFO		    m_proc_VSCPGetdriverInfo;
-	LPFNDLL_VSCPGETWEBPAGETEMPLATE		m_proc_VSCPGetWebPageTemplate;
-	LPFNDLL_VSCPGETWEBPAGEINFO			m_proc_VSCPGetWebPageInfo;
-	LPFNDLL_VSCPWEBPAGEUPDATE			m_proc_VSCPWebPageupdate;
 
 	handle = dlopen("./can232drv.so", RTLD_LAZY);
 

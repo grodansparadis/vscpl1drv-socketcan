@@ -1,0 +1,1 @@
+vscpl1drv-socketcan %MAJOR-VERSION vscpl1drv-socketcan%MAJOR-VERSION (>= %MAJOR-VERSION.%MINOR-VERSION-%RELEASE-DEBIAN) 
