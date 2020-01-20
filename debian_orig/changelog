@@ -2,4 +2,4 @@ vscpl1drv-socketcan (%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION-%RELEASE-DEB
 
   * Initial release
 
- -- Ake Hedman <akhe@grodansparadis.com>  Mon, 20 Jan 2020 16:00:01 +0200
+ -- Ake Hedman <akhe@grodansparadis.com>  %DATENOW
