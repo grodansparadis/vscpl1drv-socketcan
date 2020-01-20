@@ -1,3 +1,3 @@
-/usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION /usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION
-/usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION /usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so.%MAJOR-VERSION
-/usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION /usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so
+/var/lib/vscp/drivers/level1/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION /var/lib/vscp/drivers/level1/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION
+/var/lib/vscp/drivers/level1/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION /var/lib/vscp/drivers/level1/vscpl1drv-socketcan.so.%MAJOR-VERSION
+/var/lib/vscp/drivers/level1/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION /var/lib/vscp/drivers/level1/vscpl1drv-socketcan.so

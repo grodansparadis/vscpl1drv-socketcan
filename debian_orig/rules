@@ -4,7 +4,7 @@
 	dh $@ --with autoreconf
 
 override_dh_shlibdeps:
-	dpkg-shlibdeps -Tdebian/vscpl1drv-socketcan.substvars $$(pwd)/debian/vscpl1drv-socketcan%MAJOR-VERSION/usr/lib/%SUBFOLDER/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION
+	dpkg-shlibdeps -Tdebian/vscpl1drv-socketcan.substvars $$(pwd)/debian/vscpl1drv-socketcan/var/lib/vscp/drivers/level1/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION
 
 
 override_dh_auto_install:

@@ -1,4 +1,4 @@
-Source: vscpl1drv-socketcan%MAJOR-VERSION
+Source: vscpl1drv-socketcan
 Section: utils
 Priority: optional
 Maintainer: Ake Hedman <akhe@grodansparadis.com>
@@ -8,10 +8,10 @@ Homepage: https://www.vscp.org
 Vcs-Browser: https://github.com/grodansparadis/vscpl1drv-socketcan
 Vcs-Git: https://github.com/grodansparadis/vscpl1drv-socketcan.git
 
-Package: vscpl1drv-socketcan%MAJOR-VERSION
+Package: vscpl1drv-socketcan
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, libc6-dev (>= 2.14),
- libstdc++6 (>= 5.2), libgcc1 (>= 1:3.0)
+ libstdc++6 (>= 4.9), libgcc1 (>= 1:3.0)
 Description: Level I can4vscp driver for VSCP Works, VSCP Daemon and 
  other software that can load and use VSCP level I/CANAL drivers. The
  driver is used to communicate with all devices that implement the

@@ -1,1 +1,1 @@
-linux/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION /usr/lib/%SUBFOLDER/
+linux/vscpl1drv-socketcan.so.%MAJOR-VERSION.%MINOR-VERSION.%RELEASE-VERSION /var/lib/vscp/drivers/level1/
