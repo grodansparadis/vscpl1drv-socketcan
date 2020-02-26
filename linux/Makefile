@@ -11,8 +11,8 @@ PACKAGE_VERSION=1.1.0
 
 # STATIC = yes if a static build is requested.
 STATIC=no
-VSCP_PROJ_BASE_DIR=/srv/vscp/
-DESTDIR=/srv/vscp/
+VSCP_PROJ_BASE_DIR=/var/lib/vscp
+DESTDIR=/var/lib/vscp
 
 prefix = /usr/local
 exec_prefix = ${prefix}

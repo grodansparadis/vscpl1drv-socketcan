@@ -29,19 +29,18 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-
 #define _POSIX
-#include <stdio.h>
-#include "unistd.h"
-#include "stdlib.h"
-#include <string.h>
 #include "limits.h"
+#include "stdlib.h"
 #include "syslog.h"
+#include "unistd.h"
 #include <net/if.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/ioctl.h>
 #include <pthread.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 
 // Different on Kernel 2.6 and cansocket examples
 // currently using locally from can-utils
@@ -50,19 +49,18 @@
 #include <linux/can/raw.h>
 
 #include <canal.h>
-#include <vscp.h>
 #include <canal_macro.h>
+#include <vscp.h>
 //#include <com.h>
 #include <dllist.h>
 
+#define SOCKETCAN_BUF_SIZE 80 // Size for one message buffer
 
-#define SOCKETCAN_BUF_SIZE		80	// Size for one message buffer
+#define SOCKETCAN_MAX_RCVMSG 512 // Maximum number of received messages
+#define SOCKETCAN_MAX_SNDMSG 512 // Maximum number of received messages
 
-#define SOCKETCAN_MAX_RCVMSG	512	// Maximum number of received messages
-#define SOCKETCAN_MAX_SNDMSG	512	// Maximum number of received messages
-
-#define SOCKETCAN_RX_MUTEX     "___SOCKETCAN_LEVEL1_RX_MUTEX___"
-#define SOCKETCAN_TX_MUTEX     "___SOCKETCAN_LEVEL1_TX_MUTEX___"
+#define SOCKETCAN_RX_MUTEX "___SOCKETCAN_LEVEL1_RX_MUTEX___"
+#define SOCKETCAN_TX_MUTEX "___SOCKETCAN_LEVEL1_TX_MUTEX___"
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // _socketcanobj
@@ -94,7 +92,7 @@ struct _socketcanobj {
 };
 
 class CSocketcanObj {
-public:
+  public:
     // Constructor
     CSocketcanObj();
 
@@ -105,7 +103,7 @@ public:
         Open the device
         Return True on success
      */
-    bool open(const char *pDevice, unsigned long flags);
+    bool open(const char* pDevice, unsigned long flags);
 
     /*!
         Close the device
@@ -115,22 +113,20 @@ public:
     /*!
         Send frame
      */
-    int writeMsg( bool bExtended,
-					unsigned long id,
-					unsigned char dlc,
-					unsigned char * pdata);
+    int writeMsg(bool bExtended,
+                 unsigned long id,
+                 unsigned char dlc,
+                 unsigned char* pdata);
 
     /*!
         Send frame
      */
     int writeMsg(PCANALMSG pCanalMsg);
 
-
     /*!
         Receive frame
      */
-    int readMsg(canalMsg *pMsg);
-
+    int readMsg(canalMsg* pMsg);
 
     /*!
         Set filter(code) and mask
@@ -142,7 +138,6 @@ public:
      */
     bool setFilter(unsigned long filter);
 
-
     /*!
         Set mask
      */
@@ -152,7 +147,6 @@ public:
         Get statistics
      */
     bool getStatistics(PCANALSTATISTICS& pCanalStatistics);
-
 
     /*
         Get number of frames availabel in the input queue
@@ -164,21 +158,18 @@ public:
      */
     bool getStatus(PCANALSTATUS pCanalStatus);
 
-
     struct _socketcanobj m_socketcanobj;
-
 
     /*!
         The socketcan read/write mutexes
-	 */
+         */
     pthread_mutex_t m_socketcanRcvMutex;
-	pthread_mutex_t m_socketcanSndMutex;
+    pthread_mutex_t m_socketcanSndMutex;
 
     /*!
         id for worker thread
      */
     pthread_t m_threadId;
-
 };
 
 #endif // !defined(SOCKETCANDRV_H__16828641_5EDF_4115_9522_97BD178F566B__INCLUDED_)

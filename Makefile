@@ -16,7 +16,7 @@ INSTALL_PROGRAM = ${INSTALL}
 INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_DIR = /usr/bin/install -c -d
 PROJ_SUBDIRS=linux 
-VSCP_PROJ_BASE_DIR=/srv/vscp/
+VSCP_PROJ_BASE_DIR=/var/lib/vscp
 IPADDRESS :=  $(shell hostname -I)
 
 
