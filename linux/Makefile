@@ -36,10 +36,10 @@ WARNINGS = -Wall
 VERSION_DEFS = -DMAJOR_VERSION=$(MAJOR_VERSION) -DMINOR_VERSION=$(MINOR_VERSION) \
 	-DRELEASE_VERSION=$(RELEASE_VERSION) -DBUILD_VERSION=$(BUILD_VERSION)
 
-CFLAGS = -std=c99  ${WARNINGS} -fPIC -DCBC \
+CFLAGS = -std=c99  -g -O0 ${WARNINGS} -fPIC -DCBC \
 	-I../vscp/src/vscp/common \
 	-I../vscp/src/common
-CXXFLAGS = -D__LINUX__ -fPIC ${WARNINGS} -D_REENTRANT 
+CXXFLAGS = -D__LINUX__ -fPIC ${WARNINGS} -D_REENTRANT  -g -O0
 CPPFLAGS = -D__LINUX__ -fPIC ${WARNINGS}  \
 	-fno-var-tracking-assignments \
 	-Iinclude \
@@ -76,7 +76,7 @@ CANALSOCKETCAN_OBJECTS = vscpl1drv-socketcan.o\
 
 ### Targets: ###
 
-all: $(LIB_PLUS_VER) ../man/vscpl1drv-socketcan.1
+all: $(LIB_PLUS_VER) ../man/vscpl1drv-socketcan.1 test
 
 # static lib
 lib:	vscpl1drv-socketcan.so

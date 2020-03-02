@@ -24,6 +24,8 @@ all:
 	@for d in $(PROJ_SUBDIRS); do (echo "====================================================" &&\
 	echo "Building in dir " $$d && echo "====================================================" && cd $$d && $(MAKE)); done
 
+test: 
+	cd ./linux; make test
 
 install: all
 # Install sub components

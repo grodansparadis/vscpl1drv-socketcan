@@ -35,6 +35,7 @@
 #include "syslog.h"
 #include "unistd.h"
 #include <net/if.h>
+#include <semaphore.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <string.h>
@@ -103,7 +104,7 @@ class CSocketcanObj {
         Open the device
         Return True on success
      */
-    bool open(const char* pDevice, unsigned long flags);
+    int open(const char* pDevice, unsigned long flags);
 
     /*!
         Close the device
@@ -124,29 +125,39 @@ class CSocketcanObj {
     int writeMsg(PCANALMSG pCanalMsg);
 
     /*!
+        Send frame blcoking version
+     */
+    int writeMsgBlocking(PCANALMSG pCanalMsg, uint32_t timeout);
+
+    /*!
         Receive frame
      */
     int readMsg(canalMsg* pMsg);
 
     /*!
+        Read frame blocking version
+     */
+    int readMsgBlocking(PCANALMSG pCanalMsg, uint32_t timeout);
+
+    /*!
         Set filter(code) and mask
      */
-    bool setFilter(unsigned long filter, unsigned long mask);
+    int setFilter(unsigned long filter, unsigned long mask);
 
     /*!
         Set filter (acceptance code)
      */
-    bool setFilter(unsigned long filter);
+    int setFilter(unsigned long filter);
 
     /*!
         Set mask
      */
-    bool setMask(unsigned long mask);
+    int setMask(unsigned long mask);
 
     /*!
         Get statistics
      */
-    bool getStatistics(PCANALSTATISTICS& pCanalStatistics);
+    int getStatistics(PCANALSTATISTICS& pCanalStatistics);
 
     /*
         Get number of frames availabel in the input queue
@@ -156,15 +167,22 @@ class CSocketcanObj {
     /*!
         Get the status code
      */
-    bool getStatus(PCANALSTATUS pCanalStatus);
+    int getStatus(PCANALSTATUS pCanalStatus);
+
+    // Flag for open connection
+    bool m_bOpen;
 
     struct _socketcanobj m_socketcanobj;
 
     /*!
         The socketcan read/write mutexes
-         */
+    */
     pthread_mutex_t m_socketcanRcvMutex;
     pthread_mutex_t m_socketcanSndMutex;
+
+    sem_t m_receiveDataSem;
+    sem_t m_transmitDataPutSem;
+    sem_t m_transmitDataGetSem;
 
     /*!
         id for worker thread

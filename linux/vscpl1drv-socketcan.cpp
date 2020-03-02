@@ -186,7 +186,7 @@ CanalOpen(const char* pDevice, unsigned long flags)
 
     CSocketcanObj* pdrvObj = new CSocketcanObj();
     if (NULL != pdrvObj) {
-        if (pdrvObj->open(pDevice, flags)) {
+        if (CANAL_ERROR_SUCCESS == pdrvObj->open(pDevice, flags)) {
             if (!(h = theApp.addDriverObject(pdrvObj))) {
                 delete pdrvObj;
             }
@@ -237,8 +237,20 @@ CanalSend(long handle, PCANALMSG pCanalMsg)
 
     if (NULL == pdrvObj)
         return 0;
-    return (pdrvObj->writeMsg(pCanalMsg) ? CANAL_ERROR_SUCCESS
-                                         : CANAL_ERROR_GENERIC);
+    return (pdrvObj->writeMsg(pCanalMsg));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CanalSend blocking
+//
+
+
+extern "C" int 
+CanalBlockingSend( long handle, PCANALMSG pCanalMsg, unsigned long timeout )
+{
+  CSocketcanObj *pdrvObj =  theApp.getDriverObject( handle );
+  if ( NULL == pdrvObj ) return 0;
+  return ( pdrvObj->writeMsgBlocking( pCanalMsg, timeout ));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -252,8 +264,20 @@ CanalReceive(long handle, PCANALMSG pCanalMsg)
 
     if (NULL == pdrvObj)
         return 0;
-    return (pdrvObj->readMsg(pCanalMsg) ? CANAL_ERROR_SUCCESS
-                                        : CANAL_ERROR_GENERIC);
+    return (pdrvObj->readMsg(pCanalMsg));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CanalReceive blocking
+//
+
+extern "C" int 
+CanalBlockingReceive( long handle, PCANALMSG pCanalMsg, unsigned long timeout )
+
+{
+	CSocketcanObj *pdrvObj =  theApp.getDriverObject( handle );
+	if ( NULL == pdrvObj ) return 0;
+	return ( pdrvObj->readMsgBlocking( pCanalMsg, timeout ));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -281,8 +305,7 @@ CanalGetStatus(long handle, PCANALSTATUS pCanalStatus)
 
     if (NULL == pdrvObj)
         return 0;
-    return (pdrvObj->getStatus(pCanalStatus) ? CANAL_ERROR_SUCCESS
-                                             : CANAL_ERROR_GENERIC);
+    return (pdrvObj->getStatus(pCanalStatus));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -296,8 +319,7 @@ CanalGetStatistics(long handle, PCANALSTATISTICS pCanalStatistics)
 
     if (NULL == pdrvObj)
         return 0;
-    return (pdrvObj->getStatistics(pCanalStatistics) ? CANAL_ERROR_SUCCESS
-                                                     : CANAL_ERROR_GENERIC);
+    return (pdrvObj->getStatistics(pCanalStatistics));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -311,8 +333,7 @@ CanalSetFilter(long handle, unsigned long filter)
 
     if (NULL == pdrvObj)
         return 0;
-    return (pdrvObj->setFilter(filter) ? CANAL_ERROR_SUCCESS
-                                       : CANAL_ERROR_GENERIC);
+    return (pdrvObj->setFilter(filter));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -326,7 +347,7 @@ CanalSetMask(long handle, unsigned long mask)
 
     if (NULL == pdrvObj)
         return 0;
-    return (pdrvObj->setMask(mask) ? CANAL_ERROR_SUCCESS : CANAL_ERROR_GENERIC);
+    return (pdrvObj->setMask(mask));
 }
 
 ///////////////////////////////////////////////////////////////////////////////

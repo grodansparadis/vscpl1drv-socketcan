@@ -13,6 +13,17 @@
             "problemMatcher": "$gcc"
         },
         {
+            "taskName": "build test",
+            "type": "shell",
+            "command": "rm -rf dest; make test",
+            "args": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": "$gcc"
+        },
+        {
             "taskName": "clean & build vscpl1drv-socketcan",
             "type": "shell",
             "command": "rm -rf dest; make clean; make",

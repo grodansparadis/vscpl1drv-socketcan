@@ -35,10 +35,10 @@
 #include <canal_macro.h>
 #include <canaldlldef.h>
 
-#define NUMBER_OF_THREADS 2
+#define NUMBER_OF_THREADS 1
 
 // Prototypes
-void *workThread( void *id );
+void *myworkThread( void *id );
 
 int main( void )
 {
@@ -54,7 +54,7 @@ int main( void )
 		// Create the worker thread.
 		if ( pthread_create( 	&workthreads[ i ],
 									&thread_attr,
-									workThread,
+									myworkThread,
 									&i ) ) {
 		}
 
@@ -73,10 +73,10 @@ int main( void )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// workThread
+// myworkThread
 //
 
-void *workThread( void *id )
+void *myworkThread( void *id )
 {
 	int rv = 0;
 	void* handle = 0;
@@ -101,7 +101,7 @@ void *workThread( void *id )
 	LPFNDLL_CANALBLOCKINGRECEIVE	    m_proc_CanalBlockingReceive;
 	LPFNDLL_CANALGETDRIVERINFO		    m_proc_CanalGetdriverInfo;
 
-	handle = dlopen("./can232drv.so", RTLD_LAZY);
+	handle = dlopen("./linux/vscpl1drv-socketcan.so.1.1.0", RTLD_LAZY);
 
 	if ( 0 == handle ) {
 		fprintf( stderr, "test: Failed to load library %s\n", dlerror() );
@@ -175,6 +175,16 @@ void *workThread( void *id )
 		// Free the library
 		dlclose( handle );
 		fprintf( stderr, "test: Unable to get dl entry for CanalReceive. error=%s", dlerror() );
+		exit ( EXIT_FAILURE );
+
+	}
+
+	// * * * * CANAL BLOCKING RECEIVE * * * *
+	if ( 0 == ( m_proc_CanalBlockingReceive = (LPFNDLL_CANALBLOCKINGRECEIVE)dlsym( handle, "CanalBlockingReceive" ) ) )  {
+
+		// Free the library
+		dlclose( handle );
+		fprintf( stderr, "test: Unable to get dl entry for CanalBlockingReceive. error=%s", dlerror() );
 		exit ( EXIT_FAILURE );
 
 	}
@@ -257,7 +267,7 @@ void *workThread( void *id )
 	char device[ 32 ];
 	char flags[ 32 ];
 	long dh;
-	sprintf( device, "/dev/ttyS0;19200;0;0;125" );
+	sprintf( device, "vcan0" );
 	dh = (*m_proc_CanalOpen)( device, 1 );
 
 	printf("Sending data.\n");
@@ -280,7 +290,7 @@ void *workThread( void *id )
 		msg.data[6] = 0x77;
 		msg.data[7] = 0x88;
 		msg.timestamp = 3210;
-		(*m_proc_CanalSend)( dh, &msg );
+		//(*m_proc_CanalSend)( dh, &msg );
 		printf(".");
 
 		msg.obid = 2001;
@@ -296,7 +306,7 @@ void *workThread( void *id )
 		msg.data[6] = 0x07;
 		msg.data[7] = 0x18;
 		msg.timestamp = 0xcc55;
-		(*m_proc_CanalSend)( dh, &msg );
+		// (*m_proc_CanalSend)( dh, &msg );
 		printf(".");
 	}
 
@@ -313,7 +323,26 @@ void *workThread( void *id )
 
 	printf("===========================================================\n");
 
-	printf("Closing Log function\n");
+	//(*m_proc_CanalSetBaudrate)(dh,1);
+
+	printf("Testing DataAvailable...\n");
+	for ( int j=0; j<5; j++ ) {
+		int cnt = m_proc_CanalDataAvailable(dh);
+		fprintf(stderr,"%d\n", cnt );
+		sleep(2);
+	}
+
+	printf("Waiting for incoming events...\n");
+	int count = 0;
+	for ( int i=0; i<10; i++ ){
+		printf("%d\n", i);
+		if ( CANAL_ERROR_SUCCESS == 
+		( rv = (*m_proc_CanalBlockingReceive)( dh, &msg, 10000 ) ) ) {
+			printf("TEST: success %d %d %ld\n", rv, count++, msg.id );
+		}
+	}
+
+	printf("Closing socketcan driver\n");
 
 	// Give the driver some time to finish writing
 	printf("Waiting before close\n\n\n");
