@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+linux/vscpl1drv-socketcan.so.1.1.0
+config.log
+config.status
