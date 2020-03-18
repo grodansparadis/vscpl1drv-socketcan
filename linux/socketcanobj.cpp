@@ -109,15 +109,6 @@ int
 CSocketcanObj::open(const char* pDevice, unsigned long flags)
 {
     int rv = CANAL_ERROR_SUCCESS;
-    // char devname[IFNAMSIZ + 1];
-    // fd_set rdfs;
-    // struct timeval tv;
-    // struct sockaddr_can addr;
-    // struct ifreq ifr;
-    // struct canfd_frame frame;
-    // struct cmsghdr *cmsg;
-    // char ctrlmsg[CMSG_SPACE(sizeof(struct timeval)) +
-    // CMSG_SPACE(sizeof(__u32))]; const int canfd_on = 1;
 
     // No device name
     memset(m_socketcanobj.m_devname, 0, sizeof(m_socketcanobj.m_devname));
@@ -129,8 +120,6 @@ CSocketcanObj::open(const char* pDevice, unsigned long flags)
     unsigned long nMask   = 0;
     unsigned long nFilter = 0;
 
-    
-
     m_socketcanobj.m_bRun = true;
 
     //----------------------------------------------------------------------
@@ -140,7 +129,8 @@ CSocketcanObj::open(const char* pDevice, unsigned long flags)
     char* p = strtok((char*)pDevice, ";");
     if (NULL != p) {
         memset(m_socketcanobj.m_devname, 0, sizeof(m_socketcanobj.m_devname));
-        strncpy(m_socketcanobj.m_devname, p, strlen(p));
+        strncpy(m_socketcanobj.m_devname, p, 
+                    sizeof(m_socketcanobj.m_devname) );
     }
 
     // Mask
@@ -348,21 +338,13 @@ CSocketcanObj::readMsg(canalMsg* pMsg)
     int rv = CANAL_ERROR_SUCCESS;
 
     if ( m_socketcanobj.m_rcvList.nCount > 0 ) {
-        fprintf(stderr,"<L");
         LOCK_MUTEX( m_socketcanRcvMutex );
-        fprintf(stderr,">");
         memcpy( pMsg, m_socketcanobj.m_rcvList.pHead->pObject, sizeof( canalMsg ) );
         dll_removeNode( &m_socketcanobj.m_rcvList, m_socketcanobj.m_rcvList.pHead );
-        // if ( 0 == m_socketcanobj.m_rcvList.nCount ) {
-        //     sem_post( &m_receiveDataSem );
-        // }
-        fprintf(stderr,"<U");
         UNLOCK_MUTEX( m_socketcanRcvMutex );
-        fprintf(stderr,">");
         rv = CANAL_ERROR_SUCCESS;
     }
     else {
-        fprintf(stderr,"readMsg: CANAL_ERROR_FIFO_EMPTY\n");
         rv = CANAL_ERROR_FIFO_EMPTY;
     }
 
@@ -378,7 +360,7 @@ CSocketcanObj::readMsg(canalMsg* pMsg)
 int
 CSocketcanObj::readMsgBlocking(canalMsg* pMsg, uint32_t timeout)
 {
-    static int count = 0;
+    //static int count = 0;
     int rv = CANAL_ERROR_TIMEOUT;
     int res;
     struct timespec ts = { 0, 0 };
@@ -387,23 +369,16 @@ CSocketcanObj::readMsgBlocking(canalMsg* pMsg, uint32_t timeout)
     ts.tv_sec += timeout / 1000;
     uint32_t remain = timeout % 1000;
     ts.tv_nsec += remain * 1000000;  
-    uint8_t ttt = ts.tv_nsec / 1000000000;
     ts.tv_sec += ts.tv_nsec / 1000000000;
     ts.tv_nsec %= 1000000000;
 
-    //to.tv_sec += timeout/1000;
-
-    //fprintf(stderr,"readMsgBlocking: ----> %d %ld\n", count++, ts.tv_sec);
-
     // Must be a message pointer
     if ( NULL == pMsg ) {
-        //fprintf(stderr,"readMsgBlocking: CANAL_ERROR_PARAMETER\n");
         return CANAL_ERROR_PARAMETER;
     }
 
     // Must be open
     if ( !m_bOpen ) {
-        //fprintf(stderr,"readMsgBlocking: CANAL_ERROR_NOT_OPEN\n");
         return CANAL_ERROR_NOT_OPEN;
     }
 
@@ -419,35 +394,24 @@ CSocketcanObj::readMsgBlocking(canalMsg* pMsg, uint32_t timeout)
                 continue;       /* Restart if interrupted by handler */
             }
         }
-        //fprintf(stderr,"readMsgBlocking: Sem wait: %d\n", res );
+
         if( res == EAGAIN ) {
             fprintf(stderr,"readMsgBlocking: CANAL_ERROR_TIMEOUT\n");
             return CANAL_ERROR_TIMEOUT;
         }
     }
 
-    //fprintf(stderr,"readMsgBlocking: Buffer: %ld %ld\n", m_socketcanobj.m_rcvList.nCount, m_socketcanobj.m_rcvList.nCount);
-
     if ( m_socketcanobj.m_rcvList.nCount > 0 ) {
-        //fprintf(stderr,"<L");
         LOCK_MUTEX( m_socketcanRcvMutex );
-        //fprintf(stderr,">");
         memcpy( pMsg, m_socketcanobj.m_rcvList.pHead->pObject, sizeof( canalMsg ) );
         dll_removeNode( &m_socketcanobj.m_rcvList, m_socketcanobj.m_rcvList.pHead );
-        // if ( 0 == m_socketcanobj.m_rcvList.nCount ) {
-        //     sem_post( &m_receiveDataSem );
-        // }
         rv = CANAL_ERROR_SUCCESS;
-        //fprintf(stderr,"<U");
         UNLOCK_MUTEX( m_socketcanRcvMutex );
-        //fprintf(stderr,">");
     }
     else {
-        //fprintf(stderr,"readMsgBlocking: CANAL_ERROR_FIFO_EMPTY\n");
         rv = CANAL_ERROR_FIFO_EMPTY;
     }
 
-    //fprintf(stderr,"readMsgBlocking: Main return %d\n", rv);
     return rv;
 }
 

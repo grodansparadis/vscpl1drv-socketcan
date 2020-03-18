@@ -249,7 +249,7 @@
 #define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
 
 /* Define if debugging is disabled */
-/* #undef NDEBUG */
+#define NDEBUG /**/
 
 /* Define to the size of a long in bits. */
 #define OSBIT 64

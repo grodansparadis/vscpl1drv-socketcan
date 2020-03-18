@@ -36,10 +36,10 @@ WARNINGS = -Wall
 VERSION_DEFS = -DMAJOR_VERSION=$(MAJOR_VERSION) -DMINOR_VERSION=$(MINOR_VERSION) \
 	-DRELEASE_VERSION=$(RELEASE_VERSION) -DBUILD_VERSION=$(BUILD_VERSION)
 
-CFLAGS = -std=c99  -g -O0 ${WARNINGS} -fPIC -DCBC \
+CFLAGS = -std=c99  ${WARNINGS} -fPIC -DCBC \
 	-I../vscp/src/vscp/common \
 	-I../vscp/src/common
-CXXFLAGS = -D__LINUX__ -fPIC ${WARNINGS} -D_REENTRANT  -g -O0
+CXXFLAGS = -D__LINUX__ -fPIC ${WARNINGS} -D_REENTRANT 
 CPPFLAGS = -D__LINUX__ -fPIC ${WARNINGS}  \
 	-fno-var-tracking-assignments \
 	-Iinclude \
@@ -76,13 +76,7 @@ CANALSOCKETCAN_OBJECTS = vscpl1drv-socketcan.o\
 
 ### Targets: ###
 
-all: $(LIB_PLUS_VER) ../man/vscpl1drv-socketcan.1 test
-
-# static lib
-lib:	vscpl1drv-socketcan.so
-	
-test:  test.o $(CANALSOCKETCAN_OBJECTS)
-	$(CXX) -o $@ test.o $(CANALSOCKETCAN_OBJECTS) $(LDFLAGS) -lm -lpthread -ldl  $(EXTRALIBS)
+all: $(LIB_PLUS_VER) 
 
 $(LIB_PLUS_VER): $(CANALSOCKETCAN_OBJECTS)
 	$(CXX) -Wl,-soname,$(LIB_SONAME) -o $@ $(CANALSOCKETCAN_OBJECTS) $(DLFLAGS) -lm -lpthread -ldl  $(EXTRALIBS)
@@ -102,6 +96,9 @@ dllist.o: ../vscp/src/common/dllist.c ../vscp/src/common/dllist.h
 
 ../man/vscpl1drv-socketcan.1: ../man/vscpl1drv-socketcan.1.md
 	pandoc -s -t man ../man/vscpl1drv-socketcan.1.md -o ../man/vscpl1drv-can4vscp.1
+
+#test:  test.o $(CANALSOCKETCAN_OBJECTS)
+#	$(CXX) -o $@ test.o $(CANALSOCKETCAN_OBJECTS) $(LDFLAGS) -lm -lpthread -ldl  $(EXTRALIBS)
 
 install: all
 	$(INSTALL_DIR) $(DESTDIR)$(libdir)
@@ -129,15 +126,13 @@ deb:    all
 clean:
 	rm -rf ./.deps ./.pch
 	rm -f ./*.o
-	rm -f ../common/*.o
+	rm -f ./*.so
+	rm -f ./*.a
+	rm -f $(LIB_PLUS_VER)
+	rm -f test
 	rm -f ../vscp/src/vscp/common/*.o
 	rm -f ../vscp/src/common/*.o
-	rm -f vscpl1drv-socketcan.so
-	rm -f test
-	rm -rf ../common/*~
 	rm -rf *~
-	rm -f *.gz
-	rm -f *.deb
 
 distclean: clean
 	rm -f config.cache config.log config.status bk-deps bk-make-pch shared-ld-sh Makefile

@@ -76,13 +76,7 @@ CANALSOCKETCAN_OBJECTS = vscpl1drv-socketcan.o\
 
 ### Targets: ###
 
-all: $(LIB_PLUS_VER) ../man/vscpl1drv-socketcan.1 test
-
-# static lib
-lib:	vscpl1drv-socketcan.so
-	
-test:  test.o $(CANALSOCKETCAN_OBJECTS)
-	$(CXX) -o $@ test.o $(CANALSOCKETCAN_OBJECTS) $(LDFLAGS) @LIBS@ $(EXTRALIBS)
+all: $(LIB_PLUS_VER) 
 
 $(LIB_PLUS_VER): $(CANALSOCKETCAN_OBJECTS)
 	$(CXX) -Wl,-soname,$(LIB_SONAME) -o $@ $(CANALSOCKETCAN_OBJECTS) $(DLFLAGS) @LIBS@ $(EXTRALIBS)
@@ -102,6 +96,9 @@ dllist.o: ../vscp/src/common/dllist.c ../vscp/src/common/dllist.h
 
 ../man/vscpl1drv-socketcan.1: ../man/vscpl1drv-socketcan.1.md
 	pandoc -s -t man ../man/vscpl1drv-socketcan.1.md -o ../man/vscpl1drv-can4vscp.1
+
+#test:  test.o $(CANALSOCKETCAN_OBJECTS)
+#	$(CXX) -o $@ test.o $(CANALSOCKETCAN_OBJECTS) $(LDFLAGS) @LIBS@ $(EXTRALIBS)
 
 install: all
 	$(INSTALL_DIR) $(DESTDIR)$(libdir)
@@ -129,15 +126,13 @@ deb:    all
 clean:
 	rm -rf ./.deps ./.pch
 	rm -f ./*.o
-	rm -f ../common/*.o
+	rm -f ./*.so
+	rm -f ./*.a
+	rm -f $(LIB_PLUS_VER)
+	rm -f test
 	rm -f ../vscp/src/vscp/common/*.o
 	rm -f ../vscp/src/common/*.o
-	rm -f vscpl1drv-socketcan.so
-	rm -f test
-	rm -rf ../common/*~
 	rm -rf *~
-	rm -f *.gz
-	rm -f *.deb
 
 distclean: clean
 	rm -f config.cache config.log config.status bk-deps bk-make-pch shared-ld-sh Makefile

@@ -1,5 +1,13 @@
 #!/bin/sh
 
+#   arg1 - platform
+#   ---------------
+#   i386    ununtu/debian    ./build_debian_package.sh i386 10
+#   amd64   ununtu/debian    ./build_debian_package.sh amd64 10
+#   armhf   raspbian         ./build_debian_package.sh armhf 10
+#
+#   arg2 - COMPAT
+
 # Package version
 MAJOR_VERSION=`head -n4  VERSION.m4 |  grep major_version | tr -d "m4_define[major_version], ()"`
 MINOR_VERSION=`head -n4  VERSION.m4 |  grep minor_version | tr -d "m4_define[minor_version], ()"`
@@ -10,11 +18,21 @@ RELEASE_DEBIAN=`head -n4  VERSION.m4 |  grep release_debian | tr -d "m4_define[r
 NAME_PLUS_VER="vscpl1drv-socketcan-$MAJOR_VERSION.$MINOR_VERSION.$RELEASE_VERSION"
 BUILD_FOLDER="../dist"
 DATENOW="`date -R`"
-rm -rf ../dist/*ls ../debian
+rm -rf ../dist/*
 
 # Debian compability 10 on Raspberry
 # relevant for 'control' and 'compat'
 COMPAT="12"
+
+case "$2" in
+"")
+    echo "Using discovered COMPAT"	
+    ;;  
+*)
+    echo "Setting COMPAT = $2"
+    COMPAT="$2"
+    ;;
+esac
 
 # makes correct /usr/lib subfolder (/usr/lib/x86_64-linux-gnu/), none on Raspberry
 # relevant for 'install' and 'links'
@@ -135,7 +153,7 @@ echo "***   $NAME_PLUS_VER.tgz created."
 cd $BUILD_FOLDER
 mkdir $NAME_PLUS_VER/
 cd $NAME_PLUS_VER/
-tar -zxvf ../$NAME_PLUS_VER.tar.gz
+tar -zxf ../$NAME_PLUS_VER.tar.gz
 
 echo "***   Making 'debian' folder"
 mkdir debian

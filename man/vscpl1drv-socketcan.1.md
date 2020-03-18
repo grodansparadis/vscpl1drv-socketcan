@@ -1,6 +1,6 @@
 % vscpl1drv-socketcan(7) VSCP Level I Socketcan Driver
 % Åke Hedman, Grodans Paradis AB
-% January 10, 2020
+% Mars 18, 2020
 
 # NAME
 
@@ -17,7 +17,7 @@ SocketCAN, the official CAN API of the Linux kernel, has been included in the ke
 ## Configuration string
 
 ```
-interface;mask;filter
+interface[;mask;filter]
 ```
 
 ### interface

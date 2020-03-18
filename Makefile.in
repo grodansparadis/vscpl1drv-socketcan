@@ -24,8 +24,8 @@ all:
 	@for d in $(PROJ_SUBDIRS); do (echo "====================================================" &&\
 	echo "Building in dir " $$d && echo "====================================================" && cd $$d && $(MAKE)); done
 
-test: 
-	cd ./linux; make test
+#test: 
+#	cd ./linux; make test
 
 install: all
 # Install sub components
@@ -49,7 +49,7 @@ clean: all
 
 distclean: clean
 	@sh clean_for_dist
-	rm -f m4/Makefile
+#	rm -f m4/Makefile
 
 deb:
 	@for d in $(PROJ_SUBDIRS); do (echo "====================================================" &&\
