@@ -76,7 +76,7 @@ CANALSOCKETCAN_OBJECTS = vscpl1drv-socketcan.o\
 
 ### Targets: ###
 
-all: $(LIB_PLUS_VER) 
+all: $(LIB_PLUS_VER) ../man/vscpl1drv-socketcan.1
 
 $(LIB_PLUS_VER): $(CANALSOCKETCAN_OBJECTS)
 	$(CXX) -Wl,-soname,$(LIB_SONAME) -o $@ $(CANALSOCKETCAN_OBJECTS) $(DLFLAGS) -lm -lpthread -ldl  $(EXTRALIBS)
