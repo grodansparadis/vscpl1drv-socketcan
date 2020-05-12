@@ -42,8 +42,8 @@
 #include <linux/can.h>
 #include <linux/can/raw.h>
 
-#include <canal_macro.h>
 #include "socketcanobj.h"
+#include <canal_macro.h>
 #include <ctype.h>
 #include <libgen.h>
 #include <net/if.h>
@@ -67,8 +67,8 @@ socketcanToCanal(char* p, PCANALMSG pMsg);
 
 CSocketcanObj::CSocketcanObj()
 {
-    m_bDebug = false;
-    m_bOpen = false;
+    m_bDebug     = false;
+    m_bOpen      = false;
 
     pthread_mutex_init(&m_socketcanRcvMutex, NULL);
     pthread_mutex_init(&m_socketcanSndMutex, NULL);
@@ -111,13 +111,13 @@ CSocketcanObj::open(const char* pDevice, unsigned long flags)
 {
     int rv = CANAL_ERROR_SUCCESS;
 
-    if ( flags & 0x80000000) {
+    if (flags & SOCKETCAN_FLAG_DEBUG) {
         m_bDebug = true;
-        fprintf(stderr,"CSocketcanObj: Debugging is enabled.");
-        syslog(LOG_DEBUG,"CSocketcanObj: Debugging is enabled.");
+        fprintf(stderr, "CSocketcanObj: Debugging is enabled.\n");
+        syslog(LOG_DEBUG, "CSocketcanObj: Debugging is enabled.");
     }
 
-    // No device name
+    // Clear device name
     memset(m_socketcanobj.m_devname, 0, sizeof(m_socketcanobj.m_devname));
 
     //----------------------------------------------------------------------
@@ -136,8 +136,10 @@ CSocketcanObj::open(const char* pDevice, unsigned long flags)
     char* p = strtok((char*)pDevice, ";");
     if (NULL != p) {
         memset(m_socketcanobj.m_devname, 0, sizeof(m_socketcanobj.m_devname));
-        strncpy(m_socketcanobj.m_devname, p, 
-                    sizeof(m_socketcanobj.m_devname) );
+        strncpy(m_socketcanobj.m_devname, p, sizeof(m_socketcanobj.m_devname));
+        if (m_bDebug) {
+            syslog(LOG_DEBUG, "CSocketcanObj: Devicename = %s", p);
+        }
     }
 
     // Mask
@@ -151,6 +153,10 @@ CSocketcanObj::open(const char* pDevice, unsigned long flags)
         }
     }
 
+    if (m_bDebug) {
+        syslog(LOG_DEBUG, "CSocketcanObj: mask = %lX", nMask);
+    }
+
     // Filter
     p = strtok(NULL, ";");
     if (NULL != p) {
@@ -160,6 +166,10 @@ CSocketcanObj::open(const char* pDevice, unsigned long flags)
         else {
             nFilter = atol(p);
         }
+    }
+
+    if (m_bDebug) {
+        syslog(LOG_DEBUG, "CSocketcanObj: mask = %lX", nFilter);
     }
 
     //----------------------------------------------------------------------
@@ -232,29 +242,33 @@ CSocketcanObj::writeMsg(PCANALMSG pCanalMsg)
 {
     int rv = CANAL_ERROR_SUCCESS;
 
-    // Must be room for the message
-    if (m_socketcanobj.m_sndList.nCount < SOCKETCAN_MAX_SNDMSG) {
-        if (NULL != pCanalMsg) {
-            dllnode* pNode = new dllnode;
-            if (NULL != pNode) {
-                canalMsg* pnewMsg = new canalMsg;
-                pNode->pObject    = pnewMsg;
-                pNode->pKey       = NULL;
-                pNode->pstrKey    = NULL;
-                if (NULL != pnewMsg) {
-                    memcpy(pnewMsg, pCanalMsg, sizeof(canalMsg));
-                }
+    if (m_socketcanobj.m_sndList.nCount > SOCKETCAN_MAX_SNDMSG) {
+        syslog(LOG_DEBUG,
+               "CSocketcanObj: [writeMsgBlocking] FIFO is full [%ld]",
+               m_socketcanobj.m_sndList.nCount);
+        return CANAL_ERROR_FIFO_FULL;
+    }
 
-                LOCK_MUTEX(m_socketcanSndMutex);
-                dll_addNode(&m_socketcanobj.m_sndList, pNode);
-                sem_post( &m_transmitDataGetSem );
-                UNLOCK_MUTEX(m_socketcanSndMutex);
+    if (NULL != pCanalMsg) {
+        dllnode* pNode = new dllnode;
+        if (NULL != pNode) {
+            canalMsg* pnewMsg = new canalMsg;
+            pNode->pObject    = pnewMsg;
+            pNode->pKey       = NULL;
+            pNode->pstrKey    = NULL;
+            if (NULL != pnewMsg) {
+                memcpy(pnewMsg, pCanalMsg, sizeof(canalMsg));
+            }
 
-                rv = CANAL_ERROR_SUCCESS;
-            }
-            else {
-                rv = CANAL_ERROR_MEMORY;
-            }
+            LOCK_MUTEX(m_socketcanSndMutex);
+            dll_addNode(&m_socketcanobj.m_sndList, pNode);
+            sem_post(&m_transmitDataGetSem);
+            UNLOCK_MUTEX(m_socketcanSndMutex);
+
+            rv = CANAL_ERROR_SUCCESS;
+        }
+        else {
+            rv = CANAL_ERROR_MEMORY;
         }
     }
 
@@ -268,55 +282,83 @@ CSocketcanObj::writeMsg(PCANALMSG pCanalMsg)
 int
 CSocketcanObj::writeMsgBlocking(PCANALMSG pMsg, uint32_t timeout)
 {
-    int res;
+    // int res;
     struct timespec to = { 0, 0 };
-    clock_gettime( CLOCK_REALTIME, &to );
-    to.tv_sec += timeout/1000;
+    clock_gettime(CLOCK_REALTIME, &to);
+    to.tv_sec += timeout / 1000;
 
     // Must be a message pointer
-    if ( NULL == pMsg) return CANAL_ERROR_PARAMETER;
+    if (NULL == pMsg) {
+        syslog(LOG_DEBUG,
+               "CSocketcanObj: [writeMsgBlocking] Invalid message object");
+        return CANAL_ERROR_PARAMETER;
+    }
 
     // Must be open
-    if ( !m_bOpen ) return CANAL_ERROR_NOT_OPEN;
+    if (!m_bOpen) {
+        syslog(LOG_DEBUG, "CSocketcanObj: [writeMsgBlocking] Not open");
+        return CANAL_ERROR_NOT_OPEN;
+    }
 
-        if ( m_socketcanobj.m_sndList.nCount > SOCKETCAN_MAX_SNDMSG ) {
+    if (m_socketcanobj.m_sndList.nCount > SOCKETCAN_MAX_SNDMSG) {
+        syslog(LOG_DEBUG,
+               "CSocketcanObj: [writeMsgBlocking] FIFO is full [%ld]",
+               m_socketcanobj.m_sndList.nCount);
+        return CANAL_ERROR_FIFO_FULL;
+    }
 
-            res = sem_timedwait( &m_transmitDataPutSem, &to );
-            if( res == EAGAIN ) {
-                return CANAL_ERROR_TIMEOUT;
-            }
-            else {
-                return CANAL_ERROR_GENERIC;
-            }
+    // if (-1 == (res = sem_timedwait(&m_transmitDataPutSem, &to))) {
+    //     if (errno == ETIMEDOUT) {
+    //         if (m_bDebug) {
+    //             // Will give to much logging if used in non debug mode
+    //             syslog(LOG_DEBUG, "CSocketcanObj: [writeMsgBlocking]
+    //             Timeout");
+    //         }
+    //         return CANAL_ERROR_TIMEOUT;
+    //     }
+    //     else if (errno == EINTR) {
+    //         syslog(LOG_DEBUG, "CSocketcanObj: [writeMsgBlocking]
+    //         Interupted"); return CANAL_ERROR_INTERUPTED;
+    //     }
+    //     else if (errno == EINVAL) {
+    //         syslog(LOG_DEBUG, "CSocketcanObj: [writeMsgBlocking] Not a valid
+    //         semaphore"); return CANAL_ERROR_PARAMETER;
+    //     }
+    //     else {
+    //         syslog(LOG_DEBUG,
+    //                "CSocketcanObj: [writeMsgBlocking] General error on wait "
+    //                "fro package");
+    //         return CANAL_ERROR_GENERIC;
+    //     }
+    // }
 
-        }
-        else {
-            return CANAL_ERROR_FIFO_FULL;
-        }
+    dllnode* pNode = new dllnode;
+    if (NULL == pNode) {
+        syslog(LOG_DEBUG,
+               "CSocketcanObj: [writeMsgBlocking] Node allocation error");
+        return CANAL_ERROR_MEMORY;
+    }
 
-        dllnode *pNode = new dllnode;
-        if ( NULL == pNode ) {
-            return CANAL_ERROR_MEMORY;
-        }
+    canalMsg* pCanalMsg = new canalMsg;
+    if (NULL == pCanalMsg) {
+        delete pNode;
+        syslog(LOG_DEBUG,
+               "CSocketcanObj: [writeMsgBlocking] Message allocation error");
+        return CANAL_ERROR_MEMORY;
+    }
 
-        canalMsg *pcanalMsg = new canalMsg;
-        if ( NULL == pcanalMsg ) {
-            delete pNode;
-            return CANAL_ERROR_MEMORY;
-        }
+    pNode->pObject = pCanalMsg;
+    pNode->pKey    = NULL;
+    pNode->pstrKey = NULL;
 
-        pNode->pObject = pcanalMsg;
-        pNode->pKey = NULL;
-        pNode->pstrKey = NULL;
+    memcpy(pCanalMsg, pMsg, sizeof(canalMsg));
 
-        memcpy( pcanalMsg, pMsg, sizeof( canalMsg ));
+    LOCK_MUTEX(m_socketcanSndMutex);
+    dll_addNode(&m_socketcanobj.m_sndList, pNode);
+    sem_post(&m_transmitDataGetSem);
+    UNLOCK_MUTEX(m_socketcanSndMutex);
 
-        LOCK_MUTEX( m_socketcanSndMutex );
-        dll_addNode(&m_socketcanobj.m_sndList, pNode);
-        sem_post( &m_transmitDataGetSem );
-        UNLOCK_MUTEX( m_socketcanSndMutex );
-
-        return CANAL_ERROR_SUCCESS;
+    return CANAL_ERROR_SUCCESS;
 }
 
 //------------------------------------------------------------------------------
@@ -344,12 +386,14 @@ CSocketcanObj::readMsg(canalMsg* pMsg)
 {
     int rv = CANAL_ERROR_SUCCESS;
 
-    if ( m_socketcanobj.m_rcvList.nCount > 0 ) {
-        LOCK_MUTEX( m_socketcanRcvMutex );
-        memcpy( pMsg, m_socketcanobj.m_rcvList.pHead->pObject, sizeof( canalMsg ) );
-        dll_removeNode( &m_socketcanobj.m_rcvList, m_socketcanobj.m_rcvList.pHead );
-        UNLOCK_MUTEX( m_socketcanRcvMutex );
+    if (m_socketcanobj.m_rcvList.nCount > 0) {
+        LOCK_MUTEX(m_socketcanRcvMutex);
+        memcpy(pMsg, m_socketcanobj.m_rcvList.pHead->pObject, sizeof(canalMsg));
+        dll_removeNode(&m_socketcanobj.m_rcvList,
+                       m_socketcanobj.m_rcvList.pHead);
+        UNLOCK_MUTEX(m_socketcanRcvMutex);
         rv = CANAL_ERROR_SUCCESS;
+
     }
     else {
         rv = CANAL_ERROR_FIFO_EMPTY;
@@ -358,8 +402,6 @@ CSocketcanObj::readMsg(canalMsg* pMsg)
     return rv;
 }
 
-
-
 //------------------------------------------------------------------------------
 //  readMsgBlocking
 //------------------------------------------------------------------------------
@@ -367,53 +409,57 @@ CSocketcanObj::readMsg(canalMsg* pMsg)
 int
 CSocketcanObj::readMsgBlocking(canalMsg* pMsg, uint32_t timeout)
 {
-    //static int count = 0;
+    // static int count = 0;
     int rv = CANAL_ERROR_TIMEOUT;
     int res;
     struct timespec ts = { 0, 0 };
-    clock_gettime( CLOCK_REALTIME, &ts );
+    clock_gettime(CLOCK_REALTIME, &ts);
 
     ts.tv_sec += timeout / 1000;
     uint32_t remain = timeout % 1000;
-    ts.tv_nsec += remain * 1000000;  
+    ts.tv_nsec += remain * 1000000;
     ts.tv_sec += ts.tv_nsec / 1000000000;
     ts.tv_nsec %= 1000000000;
 
     // Must be a message pointer
-    if ( NULL == pMsg ) {
+    if (NULL == pMsg) {
         return CANAL_ERROR_PARAMETER;
     }
 
     // Must be open
-    if ( !m_bOpen ) {
+    if (!m_bOpen) {
         return CANAL_ERROR_NOT_OPEN;
     }
 
     // Yes we block if in queue is empty
     if (0 == m_socketcanobj.m_rcvList.nCount) {
-        if ( timeout ) {
-            while ((res = sem_timedwait(&m_receiveDataSem, &ts)) == -1 && errno == EINTR) {
-                continue;       /* Restart if interrupted by handler */
+        if (timeout) {
+            while ((res = sem_timedwait(&m_receiveDataSem, &ts)) == -1 &&
+                   errno == EINTR) {
+                continue; /* Restart if interrupted by handler */
             }
         }
         else {
-            while ((res = sem_wait(&m_receiveDataSem)) == -1 && errno == EINTR) {
-                continue;       /* Restart if interrupted by handler */
+            while ((res = sem_wait(&m_receiveDataSem)) == -1 &&
+                   errno == EINTR) {
+                continue; /* Restart if interrupted by handler */
             }
         }
 
-        if( res == EAGAIN ) {
-            fprintf(stderr,"readMsgBlocking: CANAL_ERROR_TIMEOUT\n");
+        if (res == EAGAIN) {
+            fprintf(stderr, "readMsgBlocking: CANAL_ERROR_TIMEOUT\n");
             return CANAL_ERROR_TIMEOUT;
         }
     }
 
-    if ( m_socketcanobj.m_rcvList.nCount > 0 ) {
-        LOCK_MUTEX( m_socketcanRcvMutex );
-        memcpy( pMsg, m_socketcanobj.m_rcvList.pHead->pObject, sizeof( canalMsg ) );
-        dll_removeNode( &m_socketcanobj.m_rcvList, m_socketcanobj.m_rcvList.pHead );
+    if (m_socketcanobj.m_rcvList.nCount > 0) {
+        LOCK_MUTEX(m_socketcanRcvMutex);
+        memcpy(pMsg, m_socketcanobj.m_rcvList.pHead->pObject, sizeof(canalMsg));
+        dll_removeNode(&m_socketcanobj.m_rcvList,
+                       m_socketcanobj.m_rcvList.pHead);
         rv = CANAL_ERROR_SUCCESS;
-        UNLOCK_MUTEX( m_socketcanRcvMutex );
+        UNLOCK_MUTEX(m_socketcanRcvMutex);
+
     }
     else {
         rv = CANAL_ERROR_FIFO_EMPTY;
@@ -452,7 +498,6 @@ CSocketcanObj::setMask(unsigned long mask)
     return CANAL_ERROR_SUCCESS;
 }
 
-
 //------------------------------------------------------------------------------
 //	getStatistics
 //------------------------------------------------------------------------------
@@ -471,11 +516,11 @@ CSocketcanObj::getStatistics(PCANALSTATISTICS& pCanalStatistics)
 int
 CSocketcanObj::getStatus(PCANALSTATUS pCanalStatus)
 {
-    memset(pCanalStatus,0, sizeof(canalStatus));
-    pCanalStatus->channel_status = 0;
-    pCanalStatus->lasterrorcode = 0;
+    memset(pCanalStatus, 0, sizeof(canalStatus));
+    pCanalStatus->channel_status   = 0;
+    pCanalStatus->lasterrorcode    = 0;
     pCanalStatus->lasterrorsubcode = 0;
-    strcpy(pCanalStatus->lasterrorstr,"All is OK!");
+    strcpy(pCanalStatus->lasterrorstr, "All is OK!");
     return CANAL_ERROR_SUCCESS;
 }
 
@@ -521,10 +566,11 @@ workThread(void* pObject)
     printf("using interface name '%s'.\n", ifr.ifr_name);
 #endif
 
-    if (bind(sock, (struct sockaddr*)&addr, sizeof(addr) ) < 0 ) {
+    if (bind(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
         syslog(LOG_ERR,
                "CReadSocketCanTread: Error in socket bind. errno=%d "
-                            "Terminating!", errno);
+               "Terminating!",
+               errno);
         close(sock);
         return NULL;
     }
@@ -549,7 +595,7 @@ workThread(void* pObject)
         tv.tv_usec = 5000; // 5ms timeout
 
         int ret;
-        if ( (ret = select(sock + 1, &rdfs, NULL, NULL, &tv)) < 0) {
+        if ((ret = select(sock + 1, &rdfs, NULL, NULL, &tv)) < 0) {
             // Error
             syslog(LOG_ERR, "Receive 'select' error (%d)\n", errno);
             psocketcanobj->m_socketcanobj.m_bRun = false;
@@ -565,7 +611,8 @@ workThread(void* pObject)
                 continue;
             }
 
-            //fprintf(stderr,"Receive thread: Event received %d (%zd) %x\n", ret, sizeof(struct can_frame), frame.can_id);
+            // fprintf(stderr,"Receive thread: Event received %d (%zd) %x\n",
+            // ret, sizeof(struct can_frame), frame.can_id);
 
             if (psocketcanobj->m_socketcanobj.m_rcvList.nCount <
                 SOCKETCAN_MAX_RCVMSG) {
@@ -587,21 +634,21 @@ workThread(void* pObject)
                         if (frame.can_id & CAN_EFF_FLAG) {
                             pMsg->flags |= CANAL_IDFLAG_EXTENDED;
                         }
-                        
+
                         // Mask of control bits
                         frame.can_id &= CAN_EFF_MASK;
                         pMsg->id = frame.can_id;
-                 
+
                         pMsg->sizeData = frame.can_dlc;
                         memcpy(pMsg->data, frame.data, frame.can_dlc);
 
                         LOCK_MUTEX(psocketcanobj->m_socketcanRcvMutex);
                         dll_addNode(&psocketcanobj->m_socketcanobj.m_rcvList,
                                     pNode);
-                        sem_post( &psocketcanobj->m_receiveDataSem );  // Signal frame in queue
+                        sem_post(
+                          &psocketcanobj
+                             ->m_receiveDataSem); // Signal frame in queue
                         UNLOCK_MUTEX(psocketcanobj->m_socketcanRcvMutex);
-
-                        
 
                         // Update statistics
                         psocketcanobj->m_socketcanobj.m_stat.cntReceiveData +=

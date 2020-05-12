@@ -173,13 +173,13 @@
             The Level I socketcan driver (You may concider using the
             Level II version instead)
         -->
-        <driver enable="true" 
+        <driver enable="true"
             name="socketcanl1|"
             config="can0"
             path="/home/akhe/development/VSCP/vscpl1drv-socketcan/linux/vscpl1drv-socketcan.so.1.1.0"
             guid="FF:FF:FF:FF:FF:FF:FF:F5:01:00:00:00:00:00:00:03"
-            flags="0x80000000"
-            translation="0x00" 
+            flags="0xE0000000"
+            translation="0x00"
         />
    
 

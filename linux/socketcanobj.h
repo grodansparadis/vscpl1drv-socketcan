@@ -55,13 +55,16 @@
 //#include <com.h>
 #include <dllist.h>
 
-#define SOCKETCAN_BUF_SIZE 80 // Size for one message buffer
+#define SOCKETCAN_BUF_SIZE      80 // Size for one message buffer
 
-#define SOCKETCAN_MAX_RCVMSG 512 // Maximum number of received messages
-#define SOCKETCAN_MAX_SNDMSG 512 // Maximum number of received messages
+#define SOCKETCAN_MAX_RCVMSG    512 // Maximum number of received messages
+#define SOCKETCAN_MAX_SNDMSG    512 // Maximum number of received messages
 
-#define SOCKETCAN_RX_MUTEX "___SOCKETCAN_LEVEL1_RX_MUTEX___"
-#define SOCKETCAN_TX_MUTEX "___SOCKETCAN_LEVEL1_TX_MUTEX___"
+#define SOCKETCAN_RX_MUTEX      "___SOCKETCAN_LEVEL1_RX_MUTEX___"
+#define SOCKETCAN_TX_MUTEX      "___SOCKETCAN_LEVEL1_TX_MUTEX___"
+
+// Flags
+#define SOCKETCAN_FLAG_DEBUG    0x80000000
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // _socketcanobj
