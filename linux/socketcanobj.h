@@ -169,6 +169,9 @@ class CSocketcanObj {
      */
     int getStatus(PCANALSTATUS pCanalStatus);
 
+    // Debug flag
+    bool m_bDebug;
+
     // Flag for open connection
     bool m_bOpen;
 

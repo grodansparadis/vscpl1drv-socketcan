@@ -50,7 +50,7 @@ filter is the filter for the adapter.
 ```xml
 <!-- The can4vscp driver -->
 <driver enable="false"
-        name="socketcan"
+        name="socketcanl1"
         config="vcan0"
         flags="0"
         translation="0x02"

@@ -249,7 +249,7 @@
 #define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
 
 /* Define if debugging is disabled */
-#define NDEBUG /**/
+/* #undef NDEBUG */
 
 /* Define to the size of a long in bits. */
 #define OSBIT 64
@@ -301,7 +301,7 @@
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */
-/* #undef YYTEXT_POINTER */
+#define YYTEXT_POINTER 1
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */

@@ -169,53 +169,19 @@
     <!-- List level I/CANAL drivers here -->
     <level1driver enable="true" >
 
-        <!-- The canallog driver -->
-        <driver enable="false">
-            <name>logger</name>
-            <config>/tmp/canallog.txt</config>
-            <path>/srv/vscp/drivers/level1/vscpl1drv-logger.so</path>
-            <flags>1</flags>
-            <guid>00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00</guid>
-        </driver>
-
-        <!-- The can4vscp driver -->
-        <driver enable="false" >
-            <name>can4vscp</name>
-            <config>/dev/ttyS0</config>
-            <path>/srv/vscp/drivers/level1/vscpl1drv-can4vscp.so</path>
-            <guid>00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00</guid>
-            <flags>0</flags>
-        </driver>
-
         <!--
             The Level I socketcan driver (You may concider using the
             Level II version instead)
         -->
-        <driver enable="false" >
-            <name>socketcanl1</name>
-            <config>vcan0</config>
-            <path>/srv/vscp/drivers/level1/vscpl1drv-socketcan.so</path>
-            <guid>00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00</guid>
-            <flags>0</flags>
-        </driver>
-
-        <!-- The can232 driver -->
-        <driver enable="false" >
-            <name>can232</name>
-            <config>/dev/ttyS0;19200;0;0;125</config>
-            <path>/srv/vscp/drivers/level1/vscpl1drv-can232.so</path>
-            <guid>00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00</guid>
-            <flags>0</flags>
-        </driver>
-
-        <!-- The xap driver -->
-        <driver enable="false" >
-            <name>xap</name>
-            <config>9598;3639</config>
-            <path>/srv/vscp/drivers/level1/vscpl1drv-xap.so</path>
-            <flags>0</flags>
-            <guid>00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00</guid>
-        </driver>
+        <driver enable="true" 
+            name="socketcanl1|"
+            config="can0"
+            path="/home/akhe/development/VSCP/vscpl1drv-socketcan/linux/vscpl1drv-socketcan.so.1.1.0"
+            guid="FF:FF:FF:FF:FF:FF:FF:F5:01:00:00:00:00:00:00:03"
+            flags="0x80000000"
+            translation="0x00" 
+        />
+   
 
     </level1driver>
 
@@ -223,7 +189,7 @@
     <level2driver enable="true">
 
         <!-- Level II MQTT -->
-        <driver enable="true"
+        <driver enable="false"
             name = "VSCP Level II MQTT Driver"
             path-driver="/home/akhe/development/VSCP/vscpl1drv-can4vscp/linux/vscpl1drv-can4vscp.so.1.1.0"
             path-config="/home/akhe/development/VSCP/vscpl1drv-can4vscp/debug/conf_standard.xml"

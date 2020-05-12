@@ -67,6 +67,7 @@ socketcanToCanal(char* p, PCANALMSG pMsg);
 
 CSocketcanObj::CSocketcanObj()
 {
+    m_bDebug = false;
     m_bOpen = false;
 
     pthread_mutex_init(&m_socketcanRcvMutex, NULL);
@@ -109,6 +110,12 @@ int
 CSocketcanObj::open(const char* pDevice, unsigned long flags)
 {
     int rv = CANAL_ERROR_SUCCESS;
+
+    if ( flags & 0x80000000) {
+        m_bDebug = true;
+        fprintf(stderr,"CSocketcanObj: Debugging is enabled.");
+        syslog(LOG_DEBUG,"CSocketcanObj: Debugging is enabled.");
+    }
 
     // No device name
     memset(m_socketcanobj.m_devname, 0, sizeof(m_socketcanobj.m_devname));
