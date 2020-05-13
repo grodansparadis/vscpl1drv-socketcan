@@ -13,7 +13,7 @@ MAJOR_VERSION=`head -n4  VERSION.m4 |  grep major_version | tr -d "m4_define[maj
 MINOR_VERSION=`head -n4  VERSION.m4 |  grep minor_version | tr -d "m4_define[minor_version], ()"`
 RELEASE_VERSION=`head -n4  VERSION.m4 |  grep release_version | tr -d "m4_define[release_version], ()"`
 BUILD_VERSION=`head -n4  VERSION.m4 |  grep build_version | tr -d "m4_define[build_version], ()"`
-RELEASE_DEBIAN=`head -n4  VERSION.m4 |  grep release_debian | tr -d "m4_define[release_debian], ()"`
+RELEASE_DEBIAN=`head -n4  VERSION.m4 |  grep build_version | tr -d "m4_define[build_version], ()"`
 
 NAME_PLUS_VER="vscpl1drv-socketcan-$MAJOR_VERSION.$MINOR_VERSION.$RELEASE_VERSION"
 BUILD_FOLDER="../dist"
