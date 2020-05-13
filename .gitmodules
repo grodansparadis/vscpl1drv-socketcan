@@ -1,3 +1,4 @@
 [submodule "vscp"]
 	path = vscp
 	url = https://github.com/grodansparadis/vscp.git
+	branch = master
