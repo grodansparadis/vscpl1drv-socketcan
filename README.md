@@ -61,7 +61,7 @@ filter is the filter for the adapter.
 
 ## Flags
 
- Not used, set to 0.
+Bit 32 (flags=0x80000000) is used to set debug mode. In this mode debug output is sent to syslog.
 
 
 ## Install the driver
