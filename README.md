@@ -26,7 +26,7 @@ From version 14.0.0 the driver is installed in */program files/vscpd/drivers/lev
 
 ## Configuration string
 
-All level I drivers are configured using a semicolon separated configuration string.
+All level I drivers are configured using a driver specific semicolon separated configuration string.
 
 ```
 interface[;mask;filter]

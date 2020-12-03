@@ -5,9 +5,9 @@
 # Package version
 MAJOR_VERSION=1
 MINOR_VERSION=1
-RELEASE_VERSION=0
-BUILD_VERSION=0
-PACKAGE_VERSION=1.1.0
+RELEASE_VERSION=1
+BUILD_VERSION=1
+PACKAGE_VERSION=1.1.1
 
 # STATIC = yes if a static build is requested.
 STATIC=no
@@ -36,10 +36,10 @@ WARNINGS = -Wall
 VERSION_DEFS = -DMAJOR_VERSION=$(MAJOR_VERSION) -DMINOR_VERSION=$(MINOR_VERSION) \
 	-DRELEASE_VERSION=$(RELEASE_VERSION) -DBUILD_VERSION=$(BUILD_VERSION)
 
-CFLAGS = -std=c99  -g -O0 ${WARNINGS} -fPIC -DCBC \
+CFLAGS = -std=c99  ${WARNINGS} -fPIC -DCBC \
 	-I../vscp/src/vscp/common \
 	-I../vscp/src/common
-CXXFLAGS = -D__LINUX__ -fPIC ${WARNINGS} -D_REENTRANT  -g -O0
+CXXFLAGS = -D__LINUX__ -fPIC ${WARNINGS} -D_REENTRANT 
 CPPFLAGS = -D__LINUX__ -fPIC ${WARNINGS}  \
 	-fno-var-tracking-assignments \
 	-Iinclude \
@@ -101,16 +101,21 @@ dllist.o: ../vscp/src/common/dllist.c ../vscp/src/common/dllist.h
 #	$(CXX) -o $@ test.o $(CANALSOCKETCAN_OBJECTS) $(LDFLAGS) -lm -lpthread -ldl  $(EXTRALIBS)
 
 install: all
-	$(INSTALL_DIR) $(DESTDIR)$(libdir)
+	$(INSTALL_DIR) $(DESTDIR)/drivers/level1
 	$(STRIP) $(LIB_PLUS_VER)
-	$(INSTALL_PROGRAM) $(LIB_PLUS_VER) $(DESTDIR)$(libdir)
-	ln -fs $(libdir)/$(LIB_PLUS_VER) $(DESTDIR)$(libdir)/vscpl1drv-socketcan.so
-	ln -fs $(libdir)/$(LIB_PLUS_VER) $(DESTDIR)$(libdir)/vscpl1drv-socketcan.so.$(MAJOR_VERSION)
-	ln -fs $(libdir)/$(LIB_PLUS_VER) $(DESTDIR)$(libdir)/vscpl1drv-socketcan.so.$(MAJOR_VERSION).$(MINOR_VERSION
-	$(INSTALL_PROGRAM) vscpl2drv-socketcan.a $(DESTDIR)$(libdir)
+	$(INSTALL_PROGRAM) $(LIB_PLUS_VER) $(DESTDIR)/drivers/level1
+	ln -fs /drivers/level1/$(LIB_PLUS_VER) $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so
+	ln -fs /drivers/level1/$(LIB_PLUS_VER) $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION)
+	ln -fs /drivers/level1/$(LIB_PLUS_VER) $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION).$(MINOR_VERSION)
+	$(INSTALL_PROGRAM) libvscpl1drv-socketcan.a $(DESTDIR)/drivers/level1
 
 uninstall: all
-	rm -rf $(VSCP_PROJ_BASE_DIR)/drivers/level2/vscpl1drv-socketcan.so
+	echo $(LIB_PLUS_VER)
+	rm -rf $(DESTDIR)/drivers/level1/$(LIB_PLUS_VER)
+	rm -rf $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so
+	rm -rf $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION)
+	rm -rf $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION).$(MINOR_VERSION)
+	rm -rf $(DESTDIR)/drivers/level1/libvscpl1drv-socketcan.a
 
 install-strip: install
 
