@@ -64,7 +64,8 @@ datadir = ${prefix}/share
 includedir = ${prefix}/include
 DLLPREFIX = lib
 
-LIB_PLUS_VER = "vscpl1drv-socketcan.so.$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)"
+//LIB_PLUS_VER = "vscpl1drv-socketcan.so.$(MAJOR_VERSION).$(MINOR_VERSION).$(RELEASE_VERSION)"
+LIB_PLUS_VER = "vscpl1drv-socketcan.so"
 LIB_SONAME = "vscpl1drv-socketcan.so.$(MAJOR_VERSION)"
 
 ### Variables: ###
@@ -104,18 +105,18 @@ install: all
 	$(INSTALL_DIR) $(DESTDIR)/drivers/level1
 	$(STRIP) $(LIB_PLUS_VER)
 	$(INSTALL_PROGRAM) $(LIB_PLUS_VER) $(DESTDIR)/drivers/level1
-	ln -fs /drivers/level1/$(LIB_PLUS_VER) $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so
-	ln -fs /drivers/level1/$(LIB_PLUS_VER) $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION)
-	ln -fs /drivers/level1/$(LIB_PLUS_VER) $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION).$(MINOR_VERSION)
-	$(INSTALL_PROGRAM) libvscpl1drv-socketcan.a $(DESTDIR)/drivers/level1
+#	ln -fs /drivers/level1/$(LIB_PLUS_VER) $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so
+#	ln -fs /drivers/level1/$(LIB_PLUS_VER) $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION)
+#	ln -fs /drivers/level1/$(LIB_PLUS_VER) $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION).$(MINOR_VERSION)
+#	$(INSTALL_PROGRAM) libvscpl1drv-socketcan.a $(DESTDIR)/drivers/level1
 
 uninstall: all
 	echo $(LIB_PLUS_VER)
 	rm -rf $(DESTDIR)/drivers/level1/$(LIB_PLUS_VER)
-	rm -rf $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so
-	rm -rf $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION)
-	rm -rf $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION).$(MINOR_VERSION)
-	rm -rf $(DESTDIR)/drivers/level1/libvscpl1drv-socketcan.a
+#	rm -rf $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so
+#	rm -rf $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION)
+#	rm -rf $(DESTDIR)/drivers/level1/vscpl1drv-socketcan.so.$(MAJOR_VERSION).$(MINOR_VERSION)
+#	rm -rf $(DESTDIR)/drivers/level1/libvscpl1drv-socketcan.a
 
 install-strip: install
 
