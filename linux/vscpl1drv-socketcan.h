@@ -8,7 +8,7 @@
 //
 // This file is part of the VSCP (http://www.vscp.org)
 //
-// Copyright (C) 2000-2021 Ake Hedman,
+// Copyright (C) 2000-2022 Ake Hedman,
 // Ake Hedman, Grodans Paradis AB, <akhe@grodansparadis.com>
 //
 // This file is distributed in the hope that it will be useful,
@@ -36,8 +36,34 @@
     "Grodans Paradis AB, Sweden, https://www.grodansparadis.com"
 
 // Max number of open connections
-#define CANAL_SOCKETCAN_DRIVER_MAX_OPEN 256
+#define CANAL_SOCKETCAN_DRIVER_MAX_OPEN           256
 
+#define XML_CONFIG  "<?xml version = \"1.0\" encoding = \"UTF-8\" ?>"                             \
+                    "<!-- Version 1.0   2021-01-26   -->"                                         \
+                    "<config>"                                                                    \
+                    "<description format=\"text\">Level I (CANAL) SocketCan driver'</description>"\
+                    "<level>1</level>"                                                            \
+                    "<blocking>yes</blocking>"                                                    \
+                    "<infourl>https://github.com/grodansparadis/vscpl1drv-socketcan</infourl>"    \
+                    "<items>"                                                                     \
+                    "<item type=\"string\" optional=\"false\" default=\"vcan0\"  "                \
+                    "  description=\"socketcan interface (vcan, can0, can1...)\" "                \
+                    "  infourl=\"https://github.com/grodansparadis/vscpl1drv-socketcan#configuration-string\" />" \
+                    "<item type=\"string\" optional=\"true\" "                                    \
+                    "  description=\"mask (priority,class,type,guid)\" "                          \
+                    "  infourl=\"https://github.com/grodansparadis/vscpl1drv-socketcan#configuration-string\" />" \
+                    "<item type=\"string\" optional=\"true\" "                                    \
+                    "  description=\"filter (priority,class,type,guid)\" "                        \
+                    "  infourl=\"https://github.com/grodansparadis/vscpl1drv-socketcan#configuration-string\" />" \
+                    "</items>"                                                                    \
+                    "<flags>"                                                                     \
+                    "<bit pos=\"31\" width=\"1\" type=\"bool\" "                                  \
+                    "  description=\"Enable debug\" "                                             \
+                    "  infourl=\"https://github.com/grodansparadis/vscpl1drv-socketcan#flags\" />"\
+                    "</flags>"                                                                    \
+                    "</config>"                                                                   \
+
+    
 /////////////////////////////////////////////////////////////////////////////
 // CSocketcanApp
 //

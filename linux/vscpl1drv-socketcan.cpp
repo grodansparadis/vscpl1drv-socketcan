@@ -7,7 +7,7 @@
 //
 // This file is part of the VSCP (http://www.vscp.org)
 //
-// Copyright (C) 2000-2021 Ake Hedman,
+// Copyright (C) 2000-2022 Ake Hedman,
 // Grodans Paradis AB, <akhe@grodansparadis.com>
 //
 // This file is distributed in the hope that it will be useful,
@@ -397,4 +397,14 @@ extern "C" const char*
 CanalGetVendorString(void)
 {
     return CANAL_DLL_VENDOR;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// CanalGetVendorString
+//
+
+extern "C" const char*
+CanalGetDriverInfo( void )
+{
+    return XML_CONFIG;
 }
