@@ -7,6 +7,7 @@ tagged, rename **Unreleased** to the version and date, and start a new
 
 ## Unreleased
 
+- The vscp submodule (vscp) points to the latest vscp master (d75d4f5c6)
 - Updated copyright year (19604e5)
 - Version information removed from driver dll (3d9bfe5)
 - Changed copyright date Correct version information is now returned (DLL_VERSION) (62d16cd)
